@@ -8,31 +8,33 @@ import {DocumentService} from './document.service';
 })
 export class AppComponent implements OnInit {
   title = 'angular-download-sample';
-  document: ArrayBuffer;
+  blob: Blob;
 
   constructor(private documentService: DocumentService) {
-
-
+    window.URL = window.URL || window.webkitURL;
   }
-
 
   async ngOnInit(): Promise<void> {
     const result = await this.documentService.get();
-    this.document = await result.arrayBuffer();
+    this.blob = await result.blob();
   }
 
-  async download(): Promise<void> {
-    const blob = await new Blob([this.document], {type: 'application/pdf'});
-    const element = document.createElement('a');
-    element.href = URL.createObjectURL(blob);
-    element.download = 'bubu.pdf';
-    element.click();
-    URL.revokeObjectURL(element.href);
-    element.remove();
-    if (window) {
-      console.log('open');
+  download(): void {
+    const url = URL.createObjectURL(this.blob);
+    alert(navigator.userAgent)
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      const window = open(url, '_blank'); // Brave mobile requires _self
+      window.onload = () => {
+        URL.revokeObjectURL(url);
+      };
     } else {
-      console.log('wtf');
+      const element = document.createElement('a');
+      element.href = url;
+      element.download = 'bubu.pdf';
+      element.click();
+      element.remove();
+      URL.revokeObjectURL(url);
     }
   }
+
 }
