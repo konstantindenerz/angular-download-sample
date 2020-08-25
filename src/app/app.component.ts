@@ -23,8 +23,12 @@ export class AppComponent implements OnInit {
 
   async download(): Promise<void> {
     const blob = await new Blob([this.document], {type: 'application/pdf'});
-    const url = URL.createObjectURL(blob);
-    const window = open(url, '_blank');
+    const element = document.createElement('a');
+    element.href = URL.createObjectURL(blob);
+    element.download = 'bubu.pdf';
+    element.click();
+    URL.revokeObjectURL(element.href);
+    element.remove();
     if (window) {
       console.log('open');
     } else {
