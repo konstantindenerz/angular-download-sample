@@ -27,10 +27,6 @@ export class AppComponent implements OnInit {
     const window = open(url, '_blank');
     if (window) {
       console.log('open');
-      window.onload = () => {
-        URL.revokeObjectURL(url);
-        console.log('onload');
-      };
     } else {
       console.log('wtf');
     }
